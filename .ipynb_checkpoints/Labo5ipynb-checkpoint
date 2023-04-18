@@ -1,0 +1,569 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "1627b860",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "9baf8651",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data = pd.read_csv('files_for_lab/csv_files/marketing_customer_analysis.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "190a9d89",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Dataframe shape: (10910, 26)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"Dataframe shape:\", data.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "e1feb26d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "       Unnamed: 0 Customer       State  Customer Lifetime Value Response  \\\n",
+      "0               0  DK49336     Arizona              4809.216960       No   \n",
+      "1               1  KX64629  California              2228.525238       No   \n",
+      "2               2  LZ68649  Washington             14947.917300       No   \n",
+      "3               3  XL78013      Oregon             22332.439460      Yes   \n",
+      "4               4  QA50777      Oregon              9025.067525       No   \n",
+      "...           ...      ...         ...                      ...      ...   \n",
+      "10905       10905  FE99816      Nevada             15563.369440       No   \n",
+      "10906       10906  KX53892      Oregon              5259.444853       No   \n",
+      "10907       10907  TL39050     Arizona             23893.304100       No   \n",
+      "10908       10908  WA60547  California             11971.977650       No   \n",
+      "10909       10909  IV32877         NaN              6857.519928      NaN   \n",
+      "\n",
+      "       Coverage Education Effective To Date EmploymentStatus Gender  ...  \\\n",
+      "0         Basic   College           2/18/11         Employed      M  ...   \n",
+      "1         Basic   College           1/18/11       Unemployed      F  ...   \n",
+      "2         Basic  Bachelor           2/10/11         Employed      M  ...   \n",
+      "3      Extended   College           1/11/11         Employed      M  ...   \n",
+      "4       Premium  Bachelor           1/17/11    Medical Leave      F  ...   \n",
+      "...         ...       ...               ...              ...    ...  ...   \n",
+      "10905   Premium  Bachelor           1/19/11       Unemployed      F  ...   \n",
+      "10906     Basic   College            1/6/11         Employed      F  ...   \n",
+      "10907  Extended  Bachelor            2/6/11         Employed      F  ...   \n",
+      "10908   Premium   College           2/13/11         Employed      F  ...   \n",
+      "10909     Basic  Bachelor            1/8/11       Unemployed      M  ...   \n",
+      "\n",
+      "       Number of Open Complaints Number of Policies     Policy Type  \\\n",
+      "0                            0.0                  9  Corporate Auto   \n",
+      "1                            0.0                  1   Personal Auto   \n",
+      "2                            0.0                  2   Personal Auto   \n",
+      "3                            0.0                  2  Corporate Auto   \n",
+      "4                            NaN                  7   Personal Auto   \n",
+      "...                          ...                ...             ...   \n",
+      "10905                        NaN                  7   Personal Auto   \n",
+      "10906                        0.0                  6   Personal Auto   \n",
+      "10907                        0.0                  2  Corporate Auto   \n",
+      "10908                        4.0                  6   Personal Auto   \n",
+      "10909                        0.0                  3   Personal Auto   \n",
+      "\n",
+      "             Policy  Renew Offer Type  Sales Channel  Total Claim Amount  \\\n",
+      "0      Corporate L3            Offer3          Agent          292.800000   \n",
+      "1       Personal L3            Offer4    Call Center          744.924331   \n",
+      "2       Personal L3            Offer3    Call Center          480.000000   \n",
+      "3      Corporate L3            Offer2         Branch          484.013411   \n",
+      "4       Personal L2            Offer1         Branch          707.925645   \n",
+      "...             ...               ...            ...                 ...   \n",
+      "10905   Personal L1            Offer3            Web         1214.400000   \n",
+      "10906   Personal L3            Offer2         Branch          273.018929   \n",
+      "10907  Corporate L3            Offer1            Web          381.306996   \n",
+      "10908   Personal L1            Offer1         Branch          618.288849   \n",
+      "10909   Personal L1            Offer4            Web         1021.719397   \n",
+      "\n",
+      "       Vehicle Class Vehicle Size Vehicle Type  \n",
+      "0      Four-Door Car      Medsize          NaN  \n",
+      "1      Four-Door Car      Medsize          NaN  \n",
+      "2                SUV      Medsize            A  \n",
+      "3      Four-Door Car      Medsize            A  \n",
+      "4      Four-Door Car      Medsize          NaN  \n",
+      "...              ...          ...          ...  \n",
+      "10905     Luxury Car      Medsize            A  \n",
+      "10906  Four-Door Car      Medsize            A  \n",
+      "10907     Luxury SUV      Medsize          NaN  \n",
+      "10908            SUV      Medsize            A  \n",
+      "10909            SUV      Medsize          NaN  \n",
+      "\n",
+      "[10910 rows x 26 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "c0bd6c64",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data.columns = data.columns.str.lower().str.replace(' ', '_')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "e0ea779d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "       unnamed:_0 customer       state  customer_lifetime_value response  \\\n",
+      "0               0  DK49336     Arizona              4809.216960       No   \n",
+      "1               1  KX64629  California              2228.525238       No   \n",
+      "2               2  LZ68649  Washington             14947.917300       No   \n",
+      "3               3  XL78013      Oregon             22332.439460      Yes   \n",
+      "4               4  QA50777      Oregon              9025.067525       No   \n",
+      "...           ...      ...         ...                      ...      ...   \n",
+      "10905       10905  FE99816      Nevada             15563.369440       No   \n",
+      "10906       10906  KX53892      Oregon              5259.444853       No   \n",
+      "10907       10907  TL39050     Arizona             23893.304100       No   \n",
+      "10908       10908  WA60547  California             11971.977650       No   \n",
+      "10909       10909  IV32877         NaN              6857.519928      NaN   \n",
+      "\n",
+      "       coverage education effective_to_date employmentstatus gender  ...  \\\n",
+      "0         Basic   College           2/18/11         Employed      M  ...   \n",
+      "1         Basic   College           1/18/11       Unemployed      F  ...   \n",
+      "2         Basic  Bachelor           2/10/11         Employed      M  ...   \n",
+      "3      Extended   College           1/11/11         Employed      M  ...   \n",
+      "4       Premium  Bachelor           1/17/11    Medical Leave      F  ...   \n",
+      "...         ...       ...               ...              ...    ...  ...   \n",
+      "10905   Premium  Bachelor           1/19/11       Unemployed      F  ...   \n",
+      "10906     Basic   College            1/6/11         Employed      F  ...   \n",
+      "10907  Extended  Bachelor            2/6/11         Employed      F  ...   \n",
+      "10908   Premium   College           2/13/11         Employed      F  ...   \n",
+      "10909     Basic  Bachelor            1/8/11       Unemployed      M  ...   \n",
+      "\n",
+      "       number_of_open_complaints number_of_policies     policy_type  \\\n",
+      "0                            0.0                  9  Corporate Auto   \n",
+      "1                            0.0                  1   Personal Auto   \n",
+      "2                            0.0                  2   Personal Auto   \n",
+      "3                            0.0                  2  Corporate Auto   \n",
+      "4                            NaN                  7   Personal Auto   \n",
+      "...                          ...                ...             ...   \n",
+      "10905                        NaN                  7   Personal Auto   \n",
+      "10906                        0.0                  6   Personal Auto   \n",
+      "10907                        0.0                  2  Corporate Auto   \n",
+      "10908                        4.0                  6   Personal Auto   \n",
+      "10909                        0.0                  3   Personal Auto   \n",
+      "\n",
+      "             policy  renew_offer_type  sales_channel  total_claim_amount  \\\n",
+      "0      Corporate L3            Offer3          Agent          292.800000   \n",
+      "1       Personal L3            Offer4    Call Center          744.924331   \n",
+      "2       Personal L3            Offer3    Call Center          480.000000   \n",
+      "3      Corporate L3            Offer2         Branch          484.013411   \n",
+      "4       Personal L2            Offer1         Branch          707.925645   \n",
+      "...             ...               ...            ...                 ...   \n",
+      "10905   Personal L1            Offer3            Web         1214.400000   \n",
+      "10906   Personal L3            Offer2         Branch          273.018929   \n",
+      "10907  Corporate L3            Offer1            Web          381.306996   \n",
+      "10908   Personal L1            Offer1         Branch          618.288849   \n",
+      "10909   Personal L1            Offer4            Web         1021.719397   \n",
+      "\n",
+      "       vehicle_class vehicle_size vehicle_type  \n",
+      "0      Four-Door Car      Medsize          NaN  \n",
+      "1      Four-Door Car      Medsize          NaN  \n",
+      "2                SUV      Medsize            A  \n",
+      "3      Four-Door Car      Medsize            A  \n",
+      "4      Four-Door Car      Medsize          NaN  \n",
+      "...              ...          ...          ...  \n",
+      "10905     Luxury Car      Medsize            A  \n",
+      "10906  Four-Door Car      Medsize            A  \n",
+      "10907     Luxury SUV      Medsize          NaN  \n",
+      "10908            SUV      Medsize            A  \n",
+      "10909            SUV      Medsize          NaN  \n",
+      "\n",
+      "[10910 rows x 26 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "2ac34ab3",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Numerical columns: ['unnamed:_0', 'customer_lifetime_value', 'income', 'monthly_premium_auto', 'months_since_last_claim', 'months_since_policy_inception', 'number_of_open_complaints', 'number_of_policies', 'total_claim_amount']\n"
+     ]
+    }
+   ],
+   "source": [
+    "num_cols = data.select_dtypes(include=[np.number]).columns.tolist()\n",
+    "print(\"Numerical columns:\", num_cols)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "9cccbac1",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Categorical columns: ['customer', 'state', 'response', 'coverage', 'education', 'effective_to_date', 'employmentstatus', 'gender', 'location_code', 'marital_status', 'policy_type', 'policy', 'renew_offer_type', 'sales_channel', 'vehicle_class', 'vehicle_size', 'vehicle_type']\n"
+     ]
+    }
+   ],
+   "source": [
+    "cat_cols = data.select_dtypes(include=['object']).columns.tolist()\n",
+    "print(\"Categorical columns:\", cat_cols)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "908c8624",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Null values:\n",
+      " unnamed:_0                          0\n",
+      "customer                            0\n",
+      "state                             631\n",
+      "customer_lifetime_value             0\n",
+      "response                          631\n",
+      "coverage                            0\n",
+      "education                           0\n",
+      "effective_to_date                   0\n",
+      "employmentstatus                    0\n",
+      "gender                              0\n",
+      "income                              0\n",
+      "location_code                       0\n",
+      "marital_status                      0\n",
+      "monthly_premium_auto                0\n",
+      "months_since_last_claim           633\n",
+      "months_since_policy_inception       0\n",
+      "number_of_open_complaints         633\n",
+      "number_of_policies                  0\n",
+      "policy_type                         0\n",
+      "policy                              0\n",
+      "renew_offer_type                    0\n",
+      "sales_channel                       0\n",
+      "total_claim_amount                  0\n",
+      "vehicle_class                     622\n",
+      "vehicle_size                      622\n",
+      "vehicle_type                     5482\n",
+      "dtype: int64\n"
+     ]
+    }
+   ],
+   "source": [
+    "null_counts = data.isnull().sum()\n",
+    "print(\"Null values:\\n\", null_counts)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "09f1d503",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0     2/18/11\n",
+      "1     1/18/11\n",
+      "2     2/10/11\n",
+      "3     1/11/11\n",
+      "4     1/17/11\n",
+      "5     2/14/11\n",
+      "6     2/14/11\n",
+      "7     2/24/11\n",
+      "8     1/19/11\n",
+      "9      1/4/11\n",
+      "10     1/2/11\n",
+      "11     2/7/11\n",
+      "12    1/31/11\n",
+      "13    1/26/11\n",
+      "14    2/28/11\n",
+      "15    1/16/11\n",
+      "16     2/7/11\n",
+      "17    1/17/11\n",
+      "18    2/14/11\n",
+      "19    2/26/11\n",
+      "20    2/23/11\n",
+      "21    2/14/11\n",
+      "22    1/15/11\n",
+      "23     2/2/11\n",
+      "24    2/15/11\n",
+      "25    1/24/11\n",
+      "26    2/21/11\n",
+      "27    2/28/11\n",
+      "28    2/22/11\n",
+      "29     1/7/11\n",
+      "30    1/28/11\n",
+      "31     2/8/11\n",
+      "32    1/28/11\n",
+      "33    2/15/11\n",
+      "34    2/12/11\n",
+      "35    2/20/11\n",
+      "36     1/5/11\n",
+      "37     2/7/11\n",
+      "38    1/28/11\n",
+      "39    2/19/11\n",
+      "40     1/5/11\n",
+      "41     2/7/11\n",
+      "42     1/3/11\n",
+      "43     2/3/11\n",
+      "44    1/19/11\n",
+      "45    1/22/11\n",
+      "46    1/17/11\n",
+      "47    1/23/11\n",
+      "48     2/5/11\n",
+      "49    2/28/11\n",
+      "Name: effective_to_date, dtype: object\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(data['effective_to_date'].head(50))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "435effb3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data['month'] = pd.DatetimeIndex(data['effective_to_date']).month"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "4129a942",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "q1_data = data[data['month'].isin([1,2,3])]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "45b1fefb",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "    unnamed:_0 customer       state  customer_lifetime_value response  \\\n",
+      "0            0  DK49336     Arizona              4809.216960       No   \n",
+      "1            1  KX64629  California              2228.525238       No   \n",
+      "2            2  LZ68649  Washington             14947.917300       No   \n",
+      "3            3  XL78013      Oregon             22332.439460      Yes   \n",
+      "4            4  QA50777      Oregon              9025.067525       No   \n",
+      "5            5  HO81102         NaN              4745.181764      NaN   \n",
+      "6            6  IW72280  California              5035.035257       No   \n",
+      "7            7  IH64929  California              4956.247235       No   \n",
+      "8            8  FM55990  California              5989.773931      Yes   \n",
+      "9            9  QX31376      Oregon             17114.328150       No   \n",
+      "10          10  HG93801     Arizona              5154.764074       No   \n",
+      "11          11  GE63585         NaN              2420.711888      NaN   \n",
+      "12          12  EO51920      Oregon             19955.257130       No   \n",
+      "13          13  KR82385  California              5454.587929       No   \n",
+      "\n",
+      "    coverage             education effective_to_date employmentstatus gender  \\\n",
+      "0      Basic               College           2/18/11         Employed      M   \n",
+      "1      Basic               College           1/18/11       Unemployed      F   \n",
+      "2      Basic              Bachelor           2/10/11         Employed      M   \n",
+      "3   Extended               College           1/11/11         Employed      M   \n",
+      "4    Premium              Bachelor           1/17/11    Medical Leave      F   \n",
+      "5      Basic  High School or Below           2/14/11         Employed      M   \n",
+      "6      Basic                Doctor           2/14/11         Employed      F   \n",
+      "7      Basic  High School or Below           2/24/11         Employed      M   \n",
+      "8    Premium               College           1/19/11         Employed      M   \n",
+      "9   Extended                Master            1/4/11         Employed      F   \n",
+      "10  Extended  High School or Below            1/2/11         Employed      M   \n",
+      "11     Basic              Bachelor            2/7/11         Employed      M   \n",
+      "12  Extended  High School or Below           1/31/11         Employed      F   \n",
+      "13     Basic                Master           1/26/11         Employed      M   \n",
+      "\n",
+      "    ...  number_of_policies     policy_type        policy  renew_offer_type  \\\n",
+      "0   ...                   9  Corporate Auto  Corporate L3            Offer3   \n",
+      "1   ...                   1   Personal Auto   Personal L3            Offer4   \n",
+      "2   ...                   2   Personal Auto   Personal L3            Offer3   \n",
+      "3   ...                   2  Corporate Auto  Corporate L3            Offer2   \n",
+      "4   ...                   7   Personal Auto   Personal L2            Offer1   \n",
+      "5   ...                   7   Personal Auto   Personal L3            Offer1   \n",
+      "6   ...                   4  Corporate Auto  Corporate L2            Offer2   \n",
+      "7   ...                   3   Personal Auto   Personal L2            Offer2   \n",
+      "8   ...                   1   Personal Auto   Personal L1            Offer2   \n",
+      "9   ...                   2  Corporate Auto  Corporate L3            Offer2   \n",
+      "10  ...                   1  Corporate Auto  Corporate L3            Offer2   \n",
+      "11  ...                   1  Corporate Auto  Corporate L3            Offer1   \n",
+      "12  ...                   2  Corporate Auto  Corporate L3            Offer1   \n",
+      "13  ...                   4   Personal Auto   Personal L3            Offer4   \n",
+      "\n",
+      "    sales_channel  total_claim_amount  vehicle_class  vehicle_size  \\\n",
+      "0           Agent          292.800000  Four-Door Car       Medsize   \n",
+      "1     Call Center          744.924331  Four-Door Car       Medsize   \n",
+      "2     Call Center          480.000000            SUV       Medsize   \n",
+      "3          Branch          484.013411  Four-Door Car       Medsize   \n",
+      "4          Branch          707.925645  Four-Door Car       Medsize   \n",
+      "5           Agent          292.800000  Four-Door Car       Medsize   \n",
+      "6          Branch          287.556107  Four-Door Car       Medsize   \n",
+      "7          Branch          247.402353   Two-Door Car       Medsize   \n",
+      "8          Branch          739.200000     Sports Car       Medsize   \n",
+      "9           Agent          408.000000  Four-Door Car         Small   \n",
+      "10         Branch          442.521087            SUV         Large   \n",
+      "11    Call Center          199.551735   Two-Door Car       Medsize   \n",
+      "12          Agent           64.669515  Four-Door Car       Medsize   \n",
+      "13    Call Center          331.200000   Two-Door Car       Medsize   \n",
+      "\n",
+      "   vehicle_type month  \n",
+      "0           NaN     2  \n",
+      "1           NaN     1  \n",
+      "2             A     2  \n",
+      "3             A     1  \n",
+      "4           NaN     1  \n",
+      "5             A     2  \n",
+      "6           NaN     2  \n",
+      "7           NaN     2  \n",
+      "8           NaN     1  \n",
+      "9           NaN     1  \n",
+      "10            A     1  \n",
+      "11          NaN     2  \n",
+      "12          NaN     1  \n",
+      "13            A     1  \n",
+      "\n",
+      "[14 rows x 27 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(q1_data.head(14))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "2fae1c01",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def transform_data(df):\n",
+    "    # Standardizar nombres de las columnas\n",
+    "    df.columns = df.columns.str.lower().str.replace(' ', '_')\n",
+    "    # Identificar columnas numéricas\n",
+    "    num_cols = df.select_dtypes(include=[np.number]).columns.tolist()\n",
+    "\n",
+    "    # Identificar columnas categóricas\n",
+    "    cat_cols = df.select_dtypes(include=['object']).columns.tolist()\n",
+    "\n",
+    "    # Verificar valores nulos y tratarlos si existen\n",
+    "    null_counts = df.isnull().sum()\n",
+    "    if null_counts.sum() > 0:\n",
+    "        df = df.dropna()\n",
+    "        print(\"Null values treated.\")\n",
+    "\n",
+    "    # Extraer meses de la columna de fecha y almacenarlos en una columna separada\n",
+    "    df['month'] = pd.DatetimeIndex(df['effective_to_date']).month\n",
+    "\n",
+    "    # Filtrar datos solo para el primer trimestre (enero, febrero, marzo)\n",
+    "    q1_data = df[df['month'].isin([1,2,3])]\n",
+    "\n",
+    "    return q1_data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "4f793c0f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<function transform_data at 0x000001E32D55A280>\n"
+     ]
+    }
+   ],
+   "source": [
+    "print (transform_data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "65028115",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.13"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
